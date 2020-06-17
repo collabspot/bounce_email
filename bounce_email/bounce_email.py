@@ -57,9 +57,9 @@ class BounceEmail:
             subject, charset = email.header.decode_header(subject)[0]
             if isinstance(subject, bytes):
                 subject = subject.decode(charset or 'utf-8')
-             match = pattern.search(subject)
-             if match:
-                 return True
+            match = pattern.search(subject)
+            if match:
+                return True
 
         from_patterns = [
             re.compile('^(MAILER-DAEMON|POSTMASTER)', re.IGNORECASE),
