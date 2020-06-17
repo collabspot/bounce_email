@@ -38,10 +38,6 @@ class BounceEmail:
         return self.error_status
 
     @property
-    def bounce_type(self):
-        return self.bounce_type
-
-    @property
     def original_email(self):
         return self.original_mail
 
@@ -51,10 +47,16 @@ class BounceEmail:
             re.compile('auto.*reply|vacation|vocation|(out|away).*office|on holiday|abwesenheits|autorespond|Automatische|eingangsbestätigung', re.IGNORECASE),
             re.compile('^(MAILER-DAEMON|POSTMASTER)\@', re.IGNORECASE),
         ]
+
         for pattern in subject_patterns:
-            match = pattern.search(self.email.get('Subject', ''))
+            subject = self.email.get('Subject', '')
+            subject, charset = email.header.decode_header(subject)[0]
+            if isinstance(subject, bytes):
+                subject = subject.decode(charset or 'utf-8')
+            match = pattern.search(subject)
             if match:
                 return True
+
         from_patterns = [
             re.compile('^(MAILER-DAEMON|POSTMASTER)', re.IGNORECASE),
         ]
@@ -73,7 +75,7 @@ class BounceEmail:
             '99': 'auto.*reply|vacation|vocation|(out|away).*office|on holiday|abwesenheits|autorespond|Automatische|eingangsbestätigung',
         }
 
-        for k, v in pattern_mapping.iteritems():
+        for k, v in pattern_mapping.items():
             pattern = re.compile(v, re.IGNORECASE)
             match = pattern.search(subject)
             if match:
@@ -168,7 +170,7 @@ class BounceEmail:
             '5.1.2': "unrouteable mail domain|Esta casilla ha expirado por falta de uso|I couldn't find any host named",
         }
 
-        for k, v in status_patterns.iteritems():
+        for k, v in status_patterns.items():
             match = search(v)
             if match:
                 return k
