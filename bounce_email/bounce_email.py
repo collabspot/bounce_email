@@ -38,10 +38,6 @@ class BounceEmail:
         return self.error_status
 
     @property
-    def bounce_type(self):
-        return self.bounce_type
-
-    @property
     def original_email(self):
         return self.original_mail
 
